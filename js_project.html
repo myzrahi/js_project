@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+	<head>
+		<title>javascript Project</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</head>
+	
+	<style type="text/css">
+	
+		body{
+			font-family:Verdana, Geneva, sans-serif;
+		}
+		
+		#box{
+			height: 100px;
+			width: 100px;			
+			display:none;
+			position:relative;
+			}
+			
+	</style>
+<body> 
+	
+	<h1>Reaction Tester</h1>
+	<p>I will create 10 figures and place them randomly on the page, your job is to click on them as fast as possible.</p>
+	
+	<p>Figure Number: <span id="figures">0</span></p>
+	<p>Your time: <span id="time">0</span> seconds</p>
+	<div id="box"></div>
+	<p><span id="results"></span></p>
+			
+	<script type="text/javascript">
+	
+		//Creating all global variables
+		var createdTime; var clickedTime; var reactionTime; var reactionTimes;
+		
+		reactionTimes = new Array();
+		
+		//creating the shape
+		function makeBox(){
+			var randomTime=Math.random();
+			
+			randomTime=randomTime*3000;
+		
+			setTimeout(function(){
+				
+				//make a circle or a square
+				if (Math.random()>0.5){
+					document.getElementById("box").style.borderRadius="50px";
+				} else {
+					document.getElementById("box").style.borderRadius="0px";
+				}
+								
+				//set random colour
+				document.getElementById("box").style.backgroundColor=getRandomColor();
+				
+				//set random positions
+				document.getElementById("box").style.left=getRandomPosition(1000)+"px";
+				document.getElementById("box").style.top=getRandomPosition(350)+"px";
+				
+				//make visible and set creation timestamp
+				document.getElementById("box").style.display="block";
+				
+				document.getElementById("figures").innerHTML=reactionTimes.length+1;
+				
+				createdTime=Date.now();
+			},randomTime);
+			
+		}
+		
+		document.getElementById("box").onclick=function(){
+			
+			//get clicking timestamp
+			clickedTime=Date.now();
+			
+			//calculate reaction time
+			reactionTime=(clickedTime-createdTime)/1000;
+			
+			//store the reaction time
+			reactionTimes.push(reactionTime);
+			
+			//display reaction time and erase figure
+			document.getElementById("time").innerHTML=reactionTime;
+			document.getElementById("box").style.display="none";
+			
+			//create 10 figures and show fastest result
+			if (reactionTimes.length < 10) {
+				makeBox();
+			} else {
+				showResults(reactionTimes);
+			}
+		}
+		
+		//generates a string with a random Hex color code
+		function getRandomColor() {
+			var letters = '0123456789ABCDEF'.split('');
+			var color = '#';
+			for (var i = 0; i < 6; i++ ) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
+		}
+		
+		//generates a random position for the figure
+		function getRandomPosition(maxPosition){
+			var randomPosition=Math.random();
+						
+			randomPosition=Math.floor(randomPosition*maxPosition);
+			return randomPosition;
+		}
+		
+		//Displays the fastest reaction time
+		function showResults(reactionTimes) {
+			reactionTimes.sort(function(a, b){return a-b});
+			document.getElementById("results").innerHTML="Congratulations your fastest time was: "+reactionTimes[0]+" seconds";
+		}
+		
+		makeBox();
+		
+	</script>
+
+</body>
+</html>
